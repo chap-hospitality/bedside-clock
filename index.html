@@ -21,62 +21,89 @@
     opacity: 0; -webkit-transition: opacity 1.5s; transition: opacity 1.5s;
   }
   #bg.on { opacity: 1; }
-  #shade {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 4, 20, 0.55);
-  }
+  #shade { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 4, 20, 0.6); }
+
   #stage {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     display: -webkit-box; display: -webkit-flex; display: flex;
-    -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column;
-    -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
     -webkit-box-align: center; -webkit-align-items: center; align-items: center;
-    text-align: center;
+    -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
     -webkit-transition: -webkit-transform 4s ease-in-out; transition: transform 4s ease-in-out;
+  }
+
+  /* ---- Left: clock ---- */
+  #left {
+    -webkit-box-flex: 1.25; -webkit-flex: 1.25; flex: 1.25;
+    text-align: center;
   }
   #time {
     font-weight: 200; line-height: 1; letter-spacing: -0.02em;
-    font-size: 26vmax; color: #5aa9ff;
+    font-size: 19vw; color: #5aa9ff; white-space: nowrap;
     text-shadow: 0 0 0.12em rgba(60, 120, 255, 0.35);
   }
   #time .colon { opacity: 0.85; }
   #time .colon.dim { opacity: 0.25; }
-  #sec { font-size: 0.22em; font-weight: 300; vertical-align: top; margin-left: 0.08em; color: #3f6fd8; }
-  #date { font-size: 4.2vmax; font-weight: 300; color: #8fb8ff; margin-top: 1.2vmax; }
-  #weather {
-    margin-top: 2.2vmax; font-size: 3.6vmax; color: #8fb8ff; font-weight: 300;
-    display: -webkit-box; display: -webkit-flex; display: flex;
-    -webkit-box-align: center; -webkit-align-items: center; align-items: center;
-  }
-  #wIcon { font-size: 1.5em; margin-right: 0.35em; }
-  #wTemp { font-size: 1.5em; color: #5aa9ff; margin-right: 0.45em; }
-  #wMeta { text-align: left; line-height: 1.25; font-size: 0.82em; color: #6f97e0; }
+  #sec { font-size: 0.22em; font-weight: 300; vertical-align: top; margin-left: 0.06em; color: #3f6fd8; }
+  #date { font-size: 3.3vw; font-weight: 300; color: #8fb8ff; margin-top: 1.2vw; }
 
-  /* Portrait: smaller digits */
+  /* ---- Right: info ---- */
+  #right {
+    -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+    border-left: 1px solid rgba(90, 140, 255, 0.22);
+    padding: 0 3.5vw 0 3.5vw; color: #8fb8ff; font-weight: 300;
+    font-size: 2.7vw; line-height: 1.3;
+  }
+  .block { padding: 1.4vw 0; border-bottom: 1px solid rgba(90, 140, 255, 0.12); }
+  .block:last-child { border-bottom: 0; }
+  .lbl { font-size: 0.78em; color: #5f80c8; }
+
+  #wNow { display: -webkit-box; display: -webkit-flex; display: flex;
+          -webkit-box-align: center; -webkit-align-items: center; align-items: center; }
+  #wIcon { font-size: 2.1em; margin-right: 0.3em; }
+  #wTemp { font-size: 2.3em; color: #5aa9ff; margin-right: 0.35em; font-weight: 200; }
+  #wDesc { line-height: 1.25; }
+
+  #aq { display: -webkit-box; display: -webkit-flex; display: flex;
+        -webkit-box-align: center; -webkit-align-items: center; align-items: center; }
+  #aqDot { width: 0.75em; height: 0.75em; border-radius: 50%; background: #444; margin-right: 0.45em; }
+  #aqVal { font-size: 1.7em; color: #5aa9ff; margin-right: 0.3em; font-weight: 300; }
+  #aqUnit { font-size: 0.72em; color: #5f80c8; margin-right: 0.5em; }
+  #aqTxt { font-size: 0.95em; }
+
+  #hours { display: -webkit-box; display: -webkit-flex; display: flex; text-align: center; }
+  .h { -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; }
+  .h .t { font-size: 0.78em; color: #5f80c8; }
+  .h .i { font-size: 1.2em; }
+  .h .r { font-size: 0.72em; color: #4f74c4; }
+
+  #sun { font-size: 0.92em; }
+
+  /* ---- Portrait: stack ---- */
   @media (orientation: portrait) {
-    #time { font-size: 30vmin; }
-    #date { font-size: 5vmin; }
-    #weather { font-size: 4.4vmin; }
+    #stage { -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column; }
+    #left, #right { -webkit-box-flex: 0; -webkit-flex: none; flex: none; }
+    #time { font-size: 30vw; }
+    #date { font-size: 5vw; }
+    #right { border-left: 0; border-top: 1px solid rgba(90, 140, 255, 0.22);
+             margin-top: 5vw; padding: 1vw 7vw 0; font-size: 4.4vw; width: 86vw; }
+    .block { padding: 2.4vw 0; }
   }
 
-  /* Night mode: deeper indigo + dimmer */
+  /* ---- Night mode ---- */
   body.night #time { color: #3d4fd6; text-shadow: none; }
   body.night #sec { color: #2b3799; }
-  body.night #date, body.night #weather, body.night #wTemp { color: #3646b3; }
-  body.night #wMeta { color: #2d3a99; }
-  body.night #shade { background: rgba(0, 0, 8, 0.82); }
-  #dimmer {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000;
-    opacity: 0; pointer-events: none;
-    -webkit-transition: opacity 2s; transition: opacity 2s;
-  }
+  body.night #date, body.night #right, body.night #wTemp, body.night #aqVal { color: #3646b3; }
+  body.night .lbl, body.night .h .t, body.night .h .r, body.night #aqUnit { color: #28348a; }
+  body.night #right { border-color: rgba(60, 80, 200, 0.18); }
+  body.night #aqDot { opacity: 0.55; }
+  body.night #shade { background: rgba(0, 0, 8, 0.85); }
+  #dimmer { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000;
+            opacity: 0; pointer-events: none; -webkit-transition: opacity 2s; transition: opacity 2s; }
   body.night #dimmer { opacity: 0.45; }
 
-  /* Settings */
-  #gear {
-    position: fixed; right: 0; bottom: 0; width: 60px; height: 60px;
-    font-size: 22px; line-height: 60px; text-align: center; color: rgba(120,160,255,0.25);
-  }
+  /* ---- Settings ---- */
+  #gear { position: fixed; right: 0; bottom: 0; width: 60px; height: 60px;
+          font-size: 22px; line-height: 60px; text-align: center; color: rgba(120,160,255,0.22); }
   #panel {
     display: none; position: fixed; left: 5%; right: 5%; top: 6%; bottom: 6%;
     background: rgba(8, 14, 40, 0.96); border: 1px solid #22336e; border-radius: 14px;
@@ -100,9 +127,24 @@
 <div id="shade"></div>
 
 <div id="stage">
-  <div id="time"><span id="hh">--</span><span class="colon" id="colon">:</span><span id="mm">--</span><span id="sec"></span></div>
-  <div id="date"></div>
-  <div id="weather"><span id="wIcon"></span><span id="wTemp"></span><span id="wMeta"></span></div>
+  <div id="left">
+    <div id="time"><span id="hh">--</span><span class="colon" id="colon">:</span><span id="mm">--</span><span id="sec"></span></div>
+    <div id="date"></div>
+  </div>
+
+  <div id="right">
+    <div class="block">
+      <div id="wNow"><span id="wIcon"></span><span id="wTemp">--°</span><span id="wDesc"></span></div>
+    </div>
+    <div class="block">
+      <div class="lbl">ฝุ่น PM2.5</div>
+      <div id="aq"><span id="aqDot"></span><span id="aqVal">--</span><span id="aqUnit">µg/m³</span><span id="aqTxt"></span></div>
+    </div>
+    <div class="block">
+      <div id="hours"></div>
+    </div>
+    <div class="block" id="sun"></div>
+  </div>
 </div>
 
 <div id="dimmer"></div>
@@ -140,7 +182,7 @@
     <button id="useBkk">กรุงเทพฯ</button>
   </div>
 
-  <div class="row note">แตะที่หน้าจอนอกกล่องนี้เพื่อปิด · ข้อมูลอากาศจาก Open-Meteo</div>
+  <div class="row note">อัปเดตล่าสุด: <span id="lastUpd">-</span><br>ข้อมูลอากาศและฝุ่นจาก Open-Meteo (ค่าประมาณจากแบบจำลอง ไม่ใช่สถานีวัดจริง)</div>
   <button id="closePanel">ปิด</button>
 </div>
 
@@ -152,14 +194,16 @@
   var DEFAULT_LOC = { lat: 13.806, lon: 100.537, name: 'กรุงเทพฯ' };
   var WEATHER_EVERY_MS = 15 * 60 * 1000;
   var PHOTO_EVERY_MS = 60 * 1000;
+  var DRIFT_EVERY_MS = 3 * 60 * 1000;
   var MAX_LOCAL_PHOTOS = 12;
-  var PHOTO_MAX_EDGE = 1136; // iPhone 5 screen long edge in pixels
+  var PHOTO_MAX_EDGE = 1136;
 
   var DAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
   var MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
                 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 
   function $(id) { return document.getElementById(id); }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
   // ---------- Storage (safe) ----------
   function load(key, fallback) {
@@ -181,8 +225,6 @@
   };
 
   // ---------- Clock ----------
-  function pad(n) { return n < 10 ? '0' + n : '' + n; }
-
   function isNight(d) {
     if (settings.night === 'on') { return true; }
     if (settings.night === 'off') { return false; }
@@ -197,7 +239,6 @@
     $('mm').textContent = pad(d.getMinutes());
     $('sec').textContent = settings.sec === 'on' ? pad(d.getSeconds()) : '';
     $('colon').className = (d.getSeconds() % 2 === 0) ? 'colon' : 'colon dim';
-
     if (d.getMinutes() !== lastMinute) {
       lastMinute = d.getMinutes();
       $('date').textContent = 'วัน' + DAYS[d.getDay()] + 'ที่ ' + d.getDate() + ' ' +
@@ -207,9 +248,25 @@
     setTimeout(tick, 1000 - d.getMilliseconds() + 5);
   }
 
-  // ---------- Weather (Open-Meteo, no API key) ----------
+  // ---------- Network ----------
+  function getJSON(url, ok, fail) {
+    var x = new XMLHttpRequest();
+    var done = false;
+    function f() { if (!done) { done = true; fail(); } }
+    x.open('GET', url, true);
+    x.timeout = 15000;
+    x.onreadystatechange = function () {
+      if (x.readyState !== 4 || done) { return; }
+      if (x.status >= 200 && x.status < 300) {
+        try { var j = JSON.parse(x.responseText); done = true; ok(j); } catch (e) { f(); }
+      } else { f(); }
+    };
+    x.ontimeout = f;
+    x.send();
+  }
+
+  // ---------- Weather ----------
   function wmo(code, isDay) {
-    // [icon, Thai label]
     if (code === 0) { return [isDay ? '☀️' : '🌙', 'ท้องฟ้าแจ่มใส']; }
     if (code === 1) { return [isDay ? '🌤' : '🌙', 'มีเมฆเล็กน้อย']; }
     if (code === 2) { return ['⛅️', 'มีเมฆบางส่วน']; }
@@ -223,48 +280,83 @@
     return ['🌡', ''];
   }
 
-  function getJSON(url, ok, fail) {
-    var x = new XMLHttpRequest();
-    x.open('GET', url, true);
-    x.timeout = 15000;
-    x.onreadystatechange = function () {
-      if (x.readyState !== 4) { return; }
-      if (x.status >= 200 && x.status < 300) {
-        try { ok(JSON.parse(x.responseText)); } catch (e) { fail(); }
-      } else { fail(); }
-    };
-    x.ontimeout = fail;
-    x.send();
+  function hhmm(iso) { return iso ? iso.substr(11, 5) : '--:--'; }
+
+  function stamp() {
+    var d = new Date();
+    $('lastUpd').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes());
   }
 
   var weatherTimer = null;
   function updateWeather() {
     var L = settings.loc;
     var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + L.lat + '&longitude=' + L.lon +
-      '&current=temperature_2m,relative_humidity_2m,weather_code,is_day' +
-      '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
-      '&timezone=Asia%2FBangkok&forecast_days=1';
+      '&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,is_day' +
+      '&hourly=temperature_2m,weather_code,precipitation_probability,is_day' +
+      '&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max' +
+      '&timezone=Asia%2FBangkok&forecast_days=2';
     getJSON(url, function (j) {
-      var c = j.current || {}, dly = j.daily || {};
+      var c = j.current || {}, dly = j.daily || {}, hr = j.hourly || {};
       var w = wmo(c.weather_code, c.is_day === 1);
       $('wIcon').textContent = w[0];
       $('wTemp').textContent = Math.round(c.temperature_2m) + '°';
       var hi = dly.temperature_2m_max ? Math.round(dly.temperature_2m_max[0]) : '-';
       var lo = dly.temperature_2m_min ? Math.round(dly.temperature_2m_min[0]) : '-';
-      var rain = dly.precipitation_probability_max ? dly.precipitation_probability_max[0] : null;
-      $('wMeta').innerHTML = w[1] + ' · ชื้น ' + c.relative_humidity_2m + '%<br>' +
-        'สูง ' + hi + '° ต่ำ ' + lo + '°' + (rain !== null ? ' · ฝน ' + rain + '%' : '');
+      $('wDesc').innerHTML = w[1] + '<br><span class="lbl">รู้สึก ' + Math.round(c.apparent_temperature) +
+        '° · ชื้น ' + c.relative_humidity_2m + '% · ' + lo + '–' + hi + '°</span>';
+
+      // Next hours: every 3 hours from the coming hour, 4 slots
+      var html = '', times = hr.time || [], now = c.time || '';
+      var start = 0;
+      for (var i = 0; i < times.length; i++) { if (times[i] > now) { start = i; break; } }
+      for (var k = 0; k < 4; k++) {
+        var idx = start + k * 3;
+        if (idx >= times.length) { break; }
+        var hw = wmo(hr.weather_code[idx], hr.is_day[idx] === 1);
+        var rp = hr.precipitation_probability ? hr.precipitation_probability[idx] : null;
+        html += '<div class="h"><div class="t">' + times[idx].substr(11, 5) + '</div>' +
+          '<div class="i">' + hw[0] + '</div><div>' + Math.round(hr.temperature_2m[idx]) + '°</div>' +
+          '<div class="r">' + (rp !== null && rp > 0 ? '💧' + rp + '%' : '&nbsp;') + '</div></div>';
+      }
+      $('hours').innerHTML = html;
+
+      var uv = dly.uv_index_max ? Math.round(dly.uv_index_max[0]) : '-';
+      $('sun').innerHTML = '🌅 ' + hhmm(dly.sunrise && dly.sunrise[0]) +
+        ' &nbsp; 🌇 ' + hhmm(dly.sunset && dly.sunset[0]) + ' &nbsp; <span class="lbl">UV สูงสุด</span> ' + uv;
+      stamp();
     }, function () {
-      // keep last reading on failure; retry sooner
       clearTimeout(weatherTimer);
       weatherTimer = setTimeout(updateWeather, 2 * 60 * 1000);
     });
+    updateAir();
     clearTimeout(weatherTimer);
     weatherTimer = setTimeout(updateWeather, WEATHER_EVERY_MS);
   }
 
+  // ---------- PM2.5 (Thai PCD bands, µg/m³) ----------
+  function pmBand(v) {
+    if (v <= 15)   { return ['#3b9cff', 'ดีมาก']; }
+    if (v <= 25)   { return ['#3ccf6e', 'ดี']; }
+    if (v <= 37.5) { return ['#f2d23c', 'ปานกลาง']; }
+    if (v <= 75)   { return ['#ff8a2b', 'เริ่มมีผลต่อสุขภาพ']; }
+    return ['#ff3b3b', 'มีผลต่อสุขภาพ'];
+  }
+
+  function updateAir() {
+    var L = settings.loc;
+    var url = 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=' + L.lat +
+      '&longitude=' + L.lon + '&current=pm2_5,pm10&timezone=Asia%2FBangkok';
+    getJSON(url, function (j) {
+      var c = j.current || {};
+      if (typeof c.pm2_5 !== 'number') { return; }
+      var v = Math.round(c.pm2_5), b = pmBand(c.pm2_5);
+      $('aqVal').textContent = v;
+      $('aqDot').style.background = b[0];
+      $('aqTxt').textContent = b[1];
+    }, function () { /* keep last reading */ });
+  }
+
   // ---------- Photos ----------
-  // Two sources: photos/photos.json in the hosted folder, and photos added on this device.
   var sharedPhotos = [];
   var localPhotos = load('photos', []);
   var photoIdx = 0, photoTimer = null;
@@ -274,9 +366,7 @@
   function showNextPhoto() {
     var list = allPhotos(), bg = $('bg');
     clearTimeout(photoTimer);
-    if (settings.photo !== 'on' || list.length === 0) {
-      bg.className = ''; return;
-    }
+    if (settings.photo !== 'on' || list.length === 0) { bg.className = ''; return; }
     photoIdx = photoIdx % list.length;
     var src = list[photoIdx];
     photoIdx++;
@@ -292,6 +382,11 @@
     photoTimer = setTimeout(showNextPhoto, PHOTO_EVERY_MS);
   }
 
+  function updatePhotoCount() {
+    $('photoCount').textContent = 'รูปในเครื่อง ' + localPhotos.length + ' รูป · รูปจาก server ' +
+      sharedPhotos.length + ' รูป';
+  }
+
   function loadSharedPhotos() {
     getJSON('photos/photos.json?t=' + new Date().getTime(), function (j) {
       sharedPhotos = [];
@@ -300,12 +395,6 @@
     }, function () { updatePhotoCount(); showNextPhoto(); });
   }
 
-  function updatePhotoCount() {
-    $('photoCount').textContent = 'รูปในเครื่อง ' + localPhotos.length + ' รูป · รูปจาก server ' +
-      sharedPhotos.length + ' รูป';
-  }
-
-  // Shrink a photo so several fit in the browser's small storage.
   function shrink(file, done) {
     var reader = new FileReader();
     reader.onload = function () {
@@ -330,16 +419,15 @@
       if (i >= files.length) {
         $('file').value = '';
         updatePhotoCount();
-        if (full) { alertNote('พื้นที่เก็บรูปในเครื่องเต็ม เพิ่มได้ ' + added + ' รูป'); }
-        photoIdx = sharedPhotos.length + localPhotos.length - Math.max(added, 1);
+        if (full) { $('photoCount').textContent = 'พื้นที่เก็บรูปในเครื่องเต็ม เพิ่มได้ ' + added + ' รูป'; }
+        photoIdx = Math.max(0, allPhotos().length - Math.max(added, 1));
         showNextPhoto();
         return;
       }
       shrink(files[i++], function (data) {
         if (data && localPhotos.length < MAX_LOCAL_PHOTOS) {
           localPhotos.push(data);
-          if (save('photos', localPhotos)) { added++; }
-          else { localPhotos.pop(); full = true; }
+          if (save('photos', localPhotos)) { added++; } else { localPhotos.pop(); full = true; }
         } else if (data) { full = true; }
         next();
       });
@@ -351,11 +439,9 @@
     localPhotos = []; save('photos', localPhotos); updatePhotoCount(); showNextPhoto();
   };
 
-  function alertNote(msg) { $('photoCount').textContent = msg; }
-
   // ---------- Settings panel ----------
   function bindSeg(id, key, after) {
-    var box = $(id), btns = box.getElementsByTagName('button');
+    var btns = $(id).getElementsByTagName('button');
     function paint() {
       for (var i = 0; i < btns.length; i++) {
         btns[i].className = btns[i].getAttribute('data-v') === settings[key] ? 'active' : '';
@@ -394,17 +480,13 @@
   function closePanel() { $('panel').className = ''; }
   $('gear').onclick = openPanel;
   $('closePanel').onclick = closePanel;
-  $('stage').onclick = function () {
-    if ($('panel').className === 'open') { closePanel(); }
-  };
+  $('stage').onclick = function () { if ($('panel').className === 'open') { closePanel(); } };
 
   // ---------- Pixel shift (anti image-retention) ----------
-  // Every few minutes, drift the whole clock to a new spot near the centre.
-  var DRIFT_EVERY_MS = 3 * 60 * 1000;
   function drift() {
     var w = window.innerWidth, h = window.innerHeight;
-    var dx = Math.round((Math.random() * 2 - 1) * w * 0.05);
-    var dy = Math.round((Math.random() * 2 - 1) * h * 0.06);
+    var dx = Math.round((Math.random() * 2 - 1) * w * 0.03);
+    var dy = Math.round((Math.random() * 2 - 1) * h * 0.05);
     var t = 'translate(' + dx + 'px,' + dy + 'px)';
     var s = $('stage').style;
     s.webkitTransform = t; s.transform = t;
@@ -412,13 +494,12 @@
   }
 
   // ---------- Start ----------
-  setTimeout(drift, DRIFT_EVERY_MS);
   paintLoc();
   tick();
   updateWeather();
   loadSharedPhotos();
+  setTimeout(drift, DRIFT_EVERY_MS);
 
-  // Refresh weather right away when the screen comes back on.
   document.addEventListener('visibilitychange', function () {
     if (!document.hidden) { lastMinute = -1; updateWeather(); }
   });
