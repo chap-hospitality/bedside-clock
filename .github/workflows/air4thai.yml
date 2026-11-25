@@ -19,7 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Fetch Air4Thai
-        run: python3 scripts/fetch_air4thai.py
+        run: |
+          pip install --quiet cryptography
+          python3 scripts/fetch_air4thai.py
       - name: Commit if changed
         run: |
           git add air.json

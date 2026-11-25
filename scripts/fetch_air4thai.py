@@ -4,9 +4,15 @@ Runs on GitHub Actions so the phone never calls Air4Thai directly
 (Air4Thai is HTTP-only / no CORS, which an HTTPS page on iOS 10 cannot use).
 """
 import json
+import ssl
 import sys
+import tempfile
 import time
 import urllib.request
+
+from cryptography import x509
+from cryptography.hazmat.primitives.serialization import Encoding
+from cryptography.x509.oid import AuthorityInformationAccessOID, ExtensionOID
 
 URLS = [
     "http://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
@@ -14,13 +20,52 @@ URLS = [
 ]
 
 
+def context_with_missing_intermediates(host):
+    """Air4Thai serves an incomplete chain. Follow the certificate's AIA
+    "CA Issuers" links to fetch the missing intermediates, then verify
+    normally against the system roots (verification stays ON)."""
+    pem = ssl.get_server_certificate((host, 443))
+    cert = x509.load_pem_x509_certificate(pem.encode())
+    extra = []
+    for _ in range(3):
+        try:
+            aia = cert.extensions.get_extension_for_oid(ExtensionOID.AUTHORITY_INFORMATION_ACCESS).value
+        except x509.ExtensionNotFound:
+            break
+        urls = [d.access_location.value for d in aia
+                if d.access_method == AuthorityInformationAccessOID.CA_ISSUERS]
+        if not urls:
+            break
+        with urllib.request.urlopen(urls[0], timeout=30) as r:
+            raw = r.read()
+        try:
+            cert = x509.load_der_x509_certificate(raw)
+        except ValueError:
+            cert = x509.load_pem_x509_certificate(raw)
+        extra.append(cert.public_bytes(Encoding.PEM).decode())
+        if cert.issuer == cert.subject:
+            break
+    ctx = ssl.create_default_context()
+    if extra:
+        with tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False) as f:
+            f.write("".join(extra))
+        ctx.load_verify_locations(cafile=f.name)
+    print(f"added {len(extra)} intermediate cert(s)", file=sys.stderr)
+    return ctx
+
+
 def fetch():
+    try:
+        ctx = context_with_missing_intermediates("air4thai.pcd.go.th")
+    except Exception as e:  # noqa: BLE001
+        print(f"intermediate lookup failed, using defaults: {e}", file=sys.stderr)
+        ctx = ssl.create_default_context()
     last = None
     for url in URLS:
         for attempt in range(3):
             try:
                 req = urllib.request.Request(url, headers={"User-Agent": "bedside-clock/1.0"})
-                with urllib.request.urlopen(req, timeout=30) as r:
+                with urllib.request.urlopen(req, timeout=30, context=ctx) as r:
                     return json.loads(r.read().decode("utf-8-sig")), url
             except Exception as e:  # noqa: BLE001
                 last = e
