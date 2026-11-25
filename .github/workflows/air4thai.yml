@@ -29,4 +29,5 @@ jobs:
           git config user.name "air4thai-bot"
           git config user.email "actions@users.noreply.github.com"
           git commit -m "Update air.json"
+          git pull --rebase --quiet origin main
           git push
