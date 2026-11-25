@@ -42,9 +42,9 @@ def context_with_missing_intermediates(host):
             cert = x509.load_der_x509_certificate(raw)
         except ValueError:
             cert = x509.load_pem_x509_certificate(raw)
-        extra.append(cert.public_bytes(Encoding.PEM).decode())
         if cert.issuer == cert.subject:
-            break
+            break  # never trust a root fetched over the network; roots come from the system store
+        extra.append(cert.public_bytes(Encoding.PEM).decode())
     ctx = ssl.create_default_context()
     if extra:
         with tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False) as f:

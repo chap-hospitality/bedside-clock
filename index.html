@@ -139,6 +139,7 @@
     <div class="block">
       <div class="lbl">ฝุ่น PM2.5</div>
       <div id="aq"><span id="aqDot"></span><span id="aqVal">--</span><span id="aqUnit">µg/m³</span><span id="aqTxt"></span></div>
+      <div class="lbl" id="aqSrc"></div>
     </div>
     <div class="block">
       <div id="hours"></div>
@@ -182,7 +183,7 @@
     <button id="useBkk">กรุงเทพฯ</button>
   </div>
 
-  <div class="row note">อัปเดตล่าสุด: <span id="lastUpd">-</span><br>ข้อมูลอากาศและฝุ่นจาก Open-Meteo (ค่าประมาณจากแบบจำลอง ไม่ใช่สถานีวัดจริง)</div>
+  <div class="row note">อัปเดตล่าสุด: <span id="lastUpd">-</span><br>สภาพอากาศจาก Open-Meteo · PM2.5 จากสถานีวัดของกรมควบคุมมลพิษ (Air4Thai) อัปเดตทุกชั่วโมง ถ้าข้อมูลเก่าเกิน 3 ชม. จะใช้ค่าประมาณจาก Open-Meteo แทน</div>
   <button id="closePanel">ปิด</button>
 </div>
 
@@ -342,18 +343,48 @@
     return ['#ff3b3b', 'มีผลต่อสุขภาพ'];
   }
 
-  function updateAir() {
+  function showPM(v, sub) {
+    var b = pmBand(v);
+    $('aqVal').textContent = Math.round(v);
+    $('aqDot').style.background = b[0];
+    $('aqTxt').textContent = b[1];
+    $('aqSrc').textContent = sub;
+  }
+
+  // Open-Meteo model value: fallback only.
+  function airFromModel() {
     var L = settings.loc;
     var url = 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=' + L.lat +
-      '&longitude=' + L.lon + '&current=pm2_5,pm10&timezone=Asia%2FBangkok';
+      '&longitude=' + L.lon + '&current=pm2_5&timezone=Asia%2FBangkok';
     getJSON(url, function (j) {
       var c = j.current || {};
-      if (typeof c.pm2_5 !== 'number') { return; }
-      var v = Math.round(c.pm2_5), b = pmBand(c.pm2_5);
-      $('aqVal').textContent = v;
-      $('aqDot').style.background = b[0];
-      $('aqTxt').textContent = b[1];
+      if (typeof c.pm2_5 === 'number') { showPM(c.pm2_5, 'ค่าประมาณ (Open-Meteo)'); }
     }, function () { /* keep last reading */ });
+  }
+
+  // Air4Thai station data, refreshed hourly by GitHub Actions into air.json.
+  function parseLocal(t) {
+    var m = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/.exec(t || '');
+    if (!m) { return null; }
+    return new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]);
+  }
+
+  function updateAir() {
+    getJSON('air.json?t=' + new Date().getTime(), function (j) {
+      var L = settings.loc, list = j.stations || [], best = null, bestD = 1e9;
+      var cosLat = Math.cos(L.lat * Math.PI / 180);
+      for (var i = 0; i < list.length; i++) {
+        var dx = (list[i].lon - L.lon) * cosLat, dy = list[i].lat - L.lat;
+        var dd = Math.sqrt(dx * dx + dy * dy) * 111; // km
+        if (dd < bestD) { bestD = dd; best = list[i]; }
+      }
+      var when = best ? parseLocal(best.t) : null;
+      var ageH = when ? (new Date().getTime() - when.getTime()) / 3600000 : 99;
+      if (!best || bestD > 30 || ageH > 3) { airFromModel(); return; }
+      var name = best.n || '';
+      if (name.length > 22) { name = name.substr(0, 21) + '…'; }
+      showPM(best.pm, pad(when.getHours()) + ':00 · ' + name);
+    }, airFromModel);
   }
 
   // ---------- Photos ----------
