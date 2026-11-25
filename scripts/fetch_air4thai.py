@@ -94,6 +94,7 @@ def main():
         out.append({
             "id": s.get("stationID"),
             "n": s.get("nameTH") or s.get("nameEN"),
+            "ne": s.get("nameEN") or s.get("nameTH"),
             "a": s.get("areaTH") or s.get("areaEN"),
             "lat": round(lat, 4), "lon": round(lon, 4),
             "pm": pm,

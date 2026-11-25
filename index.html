@@ -37,14 +37,14 @@
     text-align: center;
   }
   #time {
-    font-weight: 200; line-height: 1; letter-spacing: -0.02em;
-    font-size: 19vw; color: #5aa9ff; white-space: nowrap;
-    text-shadow: 0 0 0.12em rgba(60, 120, 255, 0.35);
+    font-weight: 200; line-height: 0.84; letter-spacing: -0.03em;
+    font-size: 44vmin; color: #5aa9ff; white-space: nowrap;
+    text-shadow: 0 0 0.08em rgba(60, 120, 255, 0.35);
   }
-  #time .colon { opacity: 0.85; }
-  #time .colon.dim { opacity: 0.25; }
-  #sec { font-size: 0.22em; font-weight: 300; vertical-align: top; margin-left: 0.06em; color: #3f6fd8; }
-  #date { font-size: 3.3vw; font-weight: 300; color: #8fb8ff; margin-top: 1.2vw; }
+  #time div { position: relative; }
+  #sec { position: absolute; font-size: 0.16em; font-weight: 300; letter-spacing: 0;
+         right: -0.9em; bottom: 0.35em; color: #3f6fd8; }
+  #date { font-size: 5vmin; font-weight: 300; color: #8fb8ff; margin-top: 2.4vmin; }
 
   /* ---- Right: info ---- */
   #right {
@@ -82,24 +82,26 @@
   @media (orientation: portrait) {
     #stage { -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column; }
     #left, #right { -webkit-box-flex: 0; -webkit-flex: none; flex: none; }
-    #time { font-size: 30vw; }
+    #time { font-size: 46vmin; }
     #date { font-size: 5vw; }
     #right { border-left: 0; border-top: 1px solid rgba(90, 140, 255, 0.22);
              margin-top: 5vw; padding: 1vw 7vw 0; font-size: 4.4vw; width: 86vw; }
     .block { padding: 2.4vw 0; }
   }
 
-  /* ---- Night mode ---- */
-  body.night #time { color: #3d4fd6; text-shadow: none; }
-  body.night #sec { color: #2b3799; }
-  body.night #date, body.night #right, body.night #wTemp, body.night #aqVal { color: #3646b3; }
-  body.night .lbl, body.night .h .t, body.night .h .r, body.night #aqUnit { color: #28348a; }
-  body.night #right { border-color: rgba(60, 80, 200, 0.18); }
-  body.night #aqDot { opacity: 0.55; }
-  body.night #shade { background: rgba(0, 0, 8, 0.85); }
+  /* ---- Night mode: white text, dimmed ---- */
+  body.night #time { color: #f2f4f8; text-shadow: none; }
+  body.night #sec { color: #9aa3b5; }
+  body.night #date, body.night #right, body.night #wTemp, body.night #aqVal { color: #d5dae4; }
+  body.night .lbl, body.night .h .t, body.night .h .r, body.night #aqUnit { color: #8c94a6; }
+  body.night #right { border-color: rgba(255, 255, 255, 0.12); }
+  body.night .block { border-color: rgba(255, 255, 255, 0.07); }
+  body.night #aqDot { opacity: 0.6; }
+  body.night #gear { color: rgba(255,255,255,0.15); }
+  body.night #shade { background: rgba(0, 0, 0, 0.85); }
   #dimmer { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000;
             opacity: 0; pointer-events: none; -webkit-transition: opacity 2s; transition: opacity 2s; }
-  body.night #dimmer { opacity: 0.45; }
+  body.night #dimmer { opacity: 0.3; }
 
   /* ---- Settings ---- */
   #gear { position: fixed; right: 0; bottom: 0; width: 60px; height: 60px;
@@ -128,7 +130,7 @@
 
 <div id="stage">
   <div id="left">
-    <div id="time"><span id="hh">--</span><span class="colon" id="colon">:</span><span id="mm">--</span><span id="sec"></span></div>
+    <div id="time"><div id="hh">--</div><div><span id="mm">--</span><span id="sec"></span></div></div>
     <div id="date"></div>
   </div>
 
@@ -137,7 +139,7 @@
       <div id="wNow"><span id="wIcon"></span><span id="wTemp">--°</span><span id="wDesc"></span></div>
     </div>
     <div class="block">
-      <div class="lbl">ฝุ่น PM2.5</div>
+      <div class="lbl" data-t="pm">ฝุ่น PM2.5</div>
       <div id="aq"><span id="aqDot"></span><span id="aqVal">--</span><span id="aqUnit">µg/m³</span><span id="aqTxt"></span></div>
       <div class="lbl" id="aqSrc"></div>
     </div>
@@ -152,39 +154,44 @@
 <div id="gear">⚙︎</div>
 
 <div id="panel">
-  <h2>ตั้งค่า</h2>
+  <h2 data-t="settings">ตั้งค่า</h2>
 
   <div class="row">
-    <div>รูปพื้นหลัง</div>
-    <label class="btn" for="file">＋ เพิ่มรูปจากเครื่อง</label>
+    <div data-t="bgPhotos">รูปพื้นหลัง</div>
+    <label class="btn" for="file" data-t="addPhoto">＋ เพิ่มรูปจากเครื่อง</label>
     <input type="file" id="file" accept="image/*" multiple>
-    <button id="clearPhotos">ลบรูปในเครื่อง</button>
+    <button id="clearPhotos" data-t="clearPhotos">ลบรูปในเครื่อง</button>
     <div class="note" id="photoCount"></div>
   </div>
 
   <div class="row seg" id="segPhoto">
-    <div>แสดงรูป</div>
-    <button data-v="on">เปิด</button><button data-v="off">ปิด</button>
+    <div data-t="showPhotos">แสดงรูป</div>
+    <button data-v="on" data-t="on">เปิด</button><button data-v="off" data-t="off">ปิด</button>
   </div>
 
   <div class="row seg" id="segSec">
-    <div>แสดงวินาที</div>
-    <button data-v="on">เปิด</button><button data-v="off">ปิด</button>
+    <div data-t="showSec">แสดงวินาที</div>
+    <button data-v="on" data-t="on">เปิด</button><button data-v="off" data-t="off">ปิด</button>
   </div>
 
   <div class="row seg" id="segNight">
-    <div>โหมดกลางคืน (หรี่จอ + สีคราม)</div>
-    <button data-v="auto">อัตโนมัติ 22:00–06:00</button><button data-v="on">เปิดตลอด</button><button data-v="off">ปิด</button>
+    <div data-t="night">โหมดกลางคืน (หรี่จอ + ตัวอักษรสีขาว)</div>
+    <button data-v="auto" data-t="nightAuto">อัตโนมัติ 22:00–06:00</button><button data-v="on" data-t="always">เปิดตลอด</button><button data-v="off" data-t="off">ปิด</button>
+  </div>
+
+  <div class="row seg" id="segLang">
+    <div>ภาษา / Language</div>
+    <button data-v="th">ไทย</button><button data-v="en">English</button>
   </div>
 
   <div class="row">
-    <div>ตำแหน่งสภาพอากาศ: <span id="locName"></span></div>
-    <button id="useGps">ใช้ตำแหน่งปัจจุบัน</button>
-    <button id="useBkk">กรุงเทพฯ</button>
+    <div><span data-t="loc">ตำแหน่งสภาพอากาศ</span>: <span id="locName"></span></div>
+    <button id="useGps" data-t="useGps">ใช้ตำแหน่งปัจจุบัน</button>
+    <button id="useBkk" data-t="bkk">กรุงเทพฯ</button>
   </div>
 
-  <div class="row note">อัปเดตล่าสุด: <span id="lastUpd">-</span><br>สภาพอากาศจาก Open-Meteo · PM2.5 จากสถานีวัดของกรมควบคุมมลพิษ (Air4Thai) อัปเดตทุกชั่วโมง ถ้าข้อมูลเก่าเกิน 3 ชม. จะใช้ค่าประมาณจาก Open-Meteo แทน</div>
-  <button id="closePanel">ปิด</button>
+  <div class="row note"><span data-t="updated">อัปเดตล่าสุด</span>: <span id="lastUpd">-</span><br><span data-t="credit"></span></div>
+  <button id="closePanel" data-t="close">ปิด</button>
 </div>
 
 <script>
@@ -222,8 +229,56 @@
     photo: load('photo', 'on'),
     sec: load('sec', 'off'),
     night: load('night', 'auto'),
-    loc: load('loc', DEFAULT_LOC)
+    loc: load('loc', DEFAULT_LOC),
+    lang: load('lang', 'th')
   };
+
+  // ---------- Language ----------
+  var DAYS_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+                   'August', 'September', 'October', 'November', 'December'];
+  var TXT = {
+    th: {
+      pm: 'ฝุ่น PM2.5', settings: 'ตั้งค่า', bgPhotos: 'รูปพื้นหลัง', addPhoto: '＋ เพิ่มรูปจากเครื่อง',
+      clearPhotos: 'ลบรูปในเครื่อง', showPhotos: 'แสดงรูป', on: 'เปิด', off: 'ปิด',
+      showSec: 'แสดงวินาที', night: 'โหมดกลางคืน (หรี่จอ + ตัวอักษรสีขาว)',
+      nightAuto: 'อัตโนมัติ 22:00–06:00', always: 'เปิดตลอด', loc: 'ตำแหน่งสภาพอากาศ',
+      useGps: 'ใช้ตำแหน่งปัจจุบัน', bkk: 'กรุงเทพฯ', close: 'ปิด', updated: 'อัปเดตล่าสุด',
+      credit: 'สภาพอากาศจาก Open-Meteo · PM2.5 จากสถานีวัดของกรมควบคุมมลพิษ (Air4Thai) อัปเดตทุกชั่วโมง ถ้าข้อมูลเก่าเกิน 3 ชม. จะใช้ค่าประมาณจาก Open-Meteo แทน',
+      feels: 'รู้สึก', hum: 'ชื้น', uv: 'UV สูงสุด', model: 'ค่าประมาณ (Open-Meteo)',
+      here: 'ตำแหน่งปัจจุบัน', finding: 'กำลังหาตำแหน่ง...',
+      photosLocal: 'รูปในเครื่อง', photosServer: 'รูปจาก server', photosUnit: 'รูป',
+      full: 'พื้นที่เก็บรูปในเครื่องเต็ม เพิ่มได้',
+      pmBand: ['ดีมาก', 'ดี', 'ปานกลาง', 'เริ่มมีผลต่อสุขภาพ', 'มีผลต่อสุขภาพ'],
+      wx: ['ท้องฟ้าแจ่มใส', 'มีเมฆเล็กน้อย', 'มีเมฆบางส่วน', 'เมฆมาก', 'หมอก', 'ฝนปรอย',
+           'ฝนตก', 'ฝนเป็นช่วงๆ', 'พายุฝนฟ้าคะนอง', 'หิมะ']
+    },
+    en: {
+      pm: 'PM2.5', settings: 'Settings', bgPhotos: 'Background photos', addPhoto: '＋ Add photos',
+      clearPhotos: 'Remove device photos', showPhotos: 'Show photos', on: 'On', off: 'Off',
+      showSec: 'Show seconds', night: 'Night mode (dimmed, white text)',
+      nightAuto: 'Auto 22:00–06:00', always: 'Always', loc: 'Weather location',
+      useGps: 'Use my location', bkk: 'Bangkok', close: 'Close', updated: 'Last updated',
+      credit: 'Weather by Open-Meteo · PM2.5 from Pollution Control Department stations (Air4Thai), hourly. If data is over 3 hours old, an Open-Meteo estimate is shown instead.',
+      feels: 'Feels', hum: 'Hum', uv: 'Max UV', model: 'Estimate (Open-Meteo)',
+      here: 'Current location', finding: 'Finding location...',
+      photosLocal: 'Device photos', photosServer: 'server photos', photosUnit: '',
+      full: 'Device photo storage full. Added',
+      pmBand: ['Very good', 'Good', 'Moderate', 'Starting to affect health', 'Affects health'],
+      wx: ['Clear', 'Mostly clear', 'Partly cloudy', 'Cloudy', 'Fog', 'Drizzle',
+           'Rain', 'Showers', 'Thunderstorm', 'Snow']
+    }
+  };
+  function T(k) { return TXT[settings.lang][k]; }
+
+  function applyLang() {
+    var els = document.querySelectorAll('[data-t]');
+    for (var i = 0; i < els.length; i++) {
+      var v = T(els[i].getAttribute('data-t'));
+      if (typeof v === 'string') { els[i].textContent = v; }
+    }
+    document.documentElement.lang = settings.lang;
+  }
 
   // ---------- Clock ----------
   function isNight(d) {
@@ -239,11 +294,11 @@
     $('hh').textContent = pad(d.getHours());
     $('mm').textContent = pad(d.getMinutes());
     $('sec').textContent = settings.sec === 'on' ? pad(d.getSeconds()) : '';
-    $('colon').className = (d.getSeconds() % 2 === 0) ? 'colon' : 'colon dim';
     if (d.getMinutes() !== lastMinute) {
       lastMinute = d.getMinutes();
-      $('date').textContent = 'วัน' + DAYS[d.getDay()] + 'ที่ ' + d.getDate() + ' ' +
-        MONTHS[d.getMonth()] + ' ' + (d.getFullYear() + 543);
+      $('date').textContent = settings.lang === 'en'
+        ? DAYS_EN[d.getDay()] + ', ' + d.getDate() + ' ' + MONTHS_EN[d.getMonth()] + ' ' + d.getFullYear()
+        : 'วัน' + DAYS[d.getDay()] + 'ที่ ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + (d.getFullYear() + 543);
       document.body.className = isNight(d) ? 'night' : '';
     }
     setTimeout(tick, 1000 - d.getMilliseconds() + 5);
@@ -268,16 +323,17 @@
 
   // ---------- Weather ----------
   function wmo(code, isDay) {
-    if (code === 0) { return [isDay ? '☀️' : '🌙', 'ท้องฟ้าแจ่มใส']; }
-    if (code === 1) { return [isDay ? '🌤' : '🌙', 'มีเมฆเล็กน้อย']; }
-    if (code === 2) { return ['⛅️', 'มีเมฆบางส่วน']; }
-    if (code === 3) { return ['☁️', 'เมฆมาก']; }
-    if (code === 45 || code === 48) { return ['🌫', 'หมอก']; }
-    if (code >= 51 && code <= 57) { return ['🌦', 'ฝนปรอย']; }
-    if (code >= 61 && code <= 67) { return ['🌧', 'ฝนตก']; }
-    if (code >= 80 && code <= 82) { return ['🌧', 'ฝนเป็นช่วงๆ']; }
-    if (code >= 95) { return ['⛈', 'พายุฝนฟ้าคะนอง']; }
-    if (code >= 71 && code <= 86) { return ['❄️', 'หิมะ']; }
+    var x = T('wx');
+    if (code === 0) { return [isDay ? '☀️' : '🌙', x[0]]; }
+    if (code === 1) { return [isDay ? '🌤' : '🌙', x[1]]; }
+    if (code === 2) { return ['⛅️', x[2]]; }
+    if (code === 3) { return ['☁️', x[3]]; }
+    if (code === 45 || code === 48) { return ['🌫', x[4]]; }
+    if (code >= 51 && code <= 57) { return ['🌦', x[5]]; }
+    if (code >= 61 && code <= 67) { return ['🌧', x[6]]; }
+    if (code >= 80 && code <= 82) { return ['🌧', x[7]]; }
+    if (code >= 95) { return ['⛈', x[8]]; }
+    if (code >= 71 && code <= 86) { return ['❄️', x[9]]; }
     return ['🌡', ''];
   }
 
@@ -303,8 +359,8 @@
       $('wTemp').textContent = Math.round(c.temperature_2m) + '°';
       var hi = dly.temperature_2m_max ? Math.round(dly.temperature_2m_max[0]) : '-';
       var lo = dly.temperature_2m_min ? Math.round(dly.temperature_2m_min[0]) : '-';
-      $('wDesc').innerHTML = w[1] + '<br><span class="lbl">รู้สึก ' + Math.round(c.apparent_temperature) +
-        '° · ชื้น ' + c.relative_humidity_2m + '% · ' + lo + '–' + hi + '°</span>';
+      $('wDesc').innerHTML = w[1] + '<br><span class="lbl">' + T('feels') + ' ' + Math.round(c.apparent_temperature) +
+        '° · ' + T('hum') + ' ' + c.relative_humidity_2m + '% · ' + lo + '–' + hi + '°</span>';
 
       // Next hours: every 3 hours from the coming hour, 4 slots
       var html = '', times = hr.time || [], now = c.time || '';
@@ -323,7 +379,7 @@
 
       var uv = dly.uv_index_max ? Math.round(dly.uv_index_max[0]) : '-';
       $('sun').innerHTML = '🌅 ' + hhmm(dly.sunrise && dly.sunrise[0]) +
-        ' &nbsp; 🌇 ' + hhmm(dly.sunset && dly.sunset[0]) + ' &nbsp; <span class="lbl">UV สูงสุด</span> ' + uv;
+        ' &nbsp; 🌇 ' + hhmm(dly.sunset && dly.sunset[0]) + ' &nbsp; <span class="lbl">' + T('uv') + '</span> ' + uv;
       stamp();
     }, function () {
       clearTimeout(weatherTimer);
@@ -336,11 +392,12 @@
 
   // ---------- PM2.5 (Thai PCD bands, µg/m³) ----------
   function pmBand(v) {
-    if (v <= 15)   { return ['#3b9cff', 'ดีมาก']; }
-    if (v <= 25)   { return ['#3ccf6e', 'ดี']; }
-    if (v <= 37.5) { return ['#f2d23c', 'ปานกลาง']; }
-    if (v <= 75)   { return ['#ff8a2b', 'เริ่มมีผลต่อสุขภาพ']; }
-    return ['#ff3b3b', 'มีผลต่อสุขภาพ'];
+    var x = T('pmBand');
+    if (v <= 15)   { return ['#3b9cff', x[0]]; }
+    if (v <= 25)   { return ['#3ccf6e', x[1]]; }
+    if (v <= 37.5) { return ['#f2d23c', x[2]]; }
+    if (v <= 75)   { return ['#ff8a2b', x[3]]; }
+    return ['#ff3b3b', x[4]];
   }
 
   function showPM(v, sub) {
@@ -358,7 +415,7 @@
       '&longitude=' + L.lon + '&current=pm2_5&timezone=Asia%2FBangkok';
     getJSON(url, function (j) {
       var c = j.current || {};
-      if (typeof c.pm2_5 === 'number') { showPM(c.pm2_5, 'ค่าประมาณ (Open-Meteo)'); }
+      if (typeof c.pm2_5 === 'number') { showPM(c.pm2_5, T('model')); }
     }, function () { /* keep last reading */ });
   }
 
@@ -381,7 +438,7 @@
       var when = best ? parseLocal(best.t) : null;
       var ageH = when ? (new Date().getTime() - when.getTime()) / 3600000 : 99;
       if (!best || bestD > 30 || ageH > 3) { airFromModel(); return; }
-      var name = best.n || '';
+      var name = (settings.lang === 'en' ? best.ne : best.n) || best.n || '';
       if (name.length > 22) { name = name.substr(0, 21) + '…'; }
       showPM(best.pm, pad(when.getHours()) + ':00 · ' + name);
     }, airFromModel);
@@ -414,8 +471,9 @@
   }
 
   function updatePhotoCount() {
-    $('photoCount').textContent = 'รูปในเครื่อง ' + localPhotos.length + ' รูป · รูปจาก server ' +
-      sharedPhotos.length + ' รูป';
+    var u = T('photosUnit') ? ' ' + T('photosUnit') : '';
+    $('photoCount').textContent = T('photosLocal') + ' ' + localPhotos.length + u + ' · ' +
+      T('photosServer') + ' ' + sharedPhotos.length + u;
   }
 
   function loadSharedPhotos() {
@@ -450,7 +508,7 @@
       if (i >= files.length) {
         $('file').value = '';
         updatePhotoCount();
-        if (full) { $('photoCount').textContent = 'พื้นที่เก็บรูปในเครื่องเต็ม เพิ่มได้ ' + added + ' รูป'; }
+        if (full) { $('photoCount').textContent = T('full') + ' ' + added; }
         photoIdx = Math.max(0, allPhotos().length - Math.max(added, 1));
         showNextPhoto();
         return;
@@ -489,14 +547,20 @@
   bindSeg('segPhoto', 'photo', showNextPhoto);
   bindSeg('segSec', 'sec', null);
   bindSeg('segNight', 'night', function () { lastMinute = -1; });
+  bindSeg('segLang', 'lang', function () {
+    applyLang(); paintLoc(); updatePhotoCount(); lastMinute = -1; updateWeather();
+  });
 
-  function paintLoc() { $('locName').textContent = settings.loc.name; }
+  function paintLoc() {
+    var L = settings.loc;
+    $('locName').textContent = L.lat === DEFAULT_LOC.lat && L.lon === DEFAULT_LOC.lon ? T('bkk') : T('here');
+  }
   $('useBkk').onclick = function () {
     settings.loc = DEFAULT_LOC; save('loc', settings.loc); paintLoc(); updateWeather();
   };
   $('useGps').onclick = function () {
     if (!navigator.geolocation) { return; }
-    $('locName').textContent = 'กำลังหาตำแหน่ง...';
+    $('locName').textContent = T('finding');
     navigator.geolocation.getCurrentPosition(function (p) {
       settings.loc = {
         lat: Math.round(p.coords.latitude * 1000) / 1000,
@@ -525,6 +589,7 @@
   }
 
   // ---------- Start ----------
+  applyLang();
   paintLoc();
   tick();
   updateWeather();
