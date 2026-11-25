@@ -1,0 +1,30 @@
+name: Update PM2.5 from Air4Thai
+
+on:
+  schedule:
+    - cron: "7 * * * *"   # hourly (Air4Thai updates hourly)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: air4thai
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch Air4Thai
+        run: python3 scripts/fetch_air4thai.py
+      - name: Commit if changed
+        run: |
+          git add air.json
+          if git diff --cached --quiet; then echo "No change"; exit 0; fi
+          git config user.name "air4thai-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "Update air.json"
+          git push
