@@ -1,0 +1,9 @@
+CACHE MANIFEST
+# bedside-clock v4
+
+CACHE:
+index.html
+nosleep.mp4
+
+NETWORK:
+*
